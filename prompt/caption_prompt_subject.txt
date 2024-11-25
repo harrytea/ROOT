@@ -1,0 +1,12 @@
+Given an image, please create a JSON representation where each entry consists of a key "object" with a numerical suffix starting from 1. The value of each "object" key contains a "description" key, a "subject" key and a "position" key, in which the value of the "description" key is a concise, up to eight-word sentence describing each main, clear, obvious, distinct object or person in the image while the value of the "subject" key is the main subject (up to two words) from the"description" value, excluding most modifiers. Meanwhile, the "position" key's value should indicate the relative position of the object's center point in relation to the image, with a value less than 1.
+
+
+Please note the following requirements:
+1. Each entry should uniquely describe one element without repeating values. 
+2. Ensure that the described objects are suitable for measuring distances between them and exclude elements like walls, floors or marble platforms. 
+3. If identical objects occur multiply times in different places of the images, you should describe them according to their positions in the image. For example, if there are two identical computers in the image, you may describe them as left computer and right computer respectively.
+4. Please include every suitable object in the image, don't miss any of them.
+5. Please try to use distinct words for each object such that we can recognize it easily. Meanwhile, please sort your output such that it starts from the clear and big objects to the unclear and small objects.
+6. Make sure that your output can be parsed by python's  json.loads() directly.
+
+Following is an example: {"object1": { "description": "walking man in red hat", "subject": "walking man", "position": "0.2,0.3"},"object2": { "description": "wooden pallet with boxes", "subject": "wooden pallet", "position": "0.6,0.1"},"object3": { "description": "cardboard boxes stacked", "subject": "cardboard boxes", "position": "0.8,0.9"}}

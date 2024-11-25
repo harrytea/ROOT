@@ -1,0 +1,9 @@
+Please provide a title and a concise, one sentence description of the given image, focusing on the scene it depicts.
+
+Following is the requirement:
+1. For the title, create a concise phrase of up to three words, such as "living room".
+2. In the description, focuse on the scene of this image and provide a detailed explanation, such as "This is a living room with xxxx" or "This is a dinner table with xxx".
+3. Format your output in the following json format, ensuring it can be parsed directly by python's json.loads() functions.
+
+Following is a output example for your reference:
+{"title": "living room", "description": "This is a living room with xxx"}

@@ -1,0 +1,6 @@
+Given an image, please use an up to eight-word sentence to precisely describe the main item in this image.
+
+
+Please note the following requirements:
+1. Only describe the object in the center of the image. Don't describe other objects on the edge.
+2. Output the description directly and do not output anything else.

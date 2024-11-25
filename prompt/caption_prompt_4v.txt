@@ -1,0 +1,8 @@
+Please provide a list of captions of the items in the given image according to these guidelines:
+
+1. Ensure to include every detail and minor item visible in the image
+2. In case of objects having a containment relationship, both the container and the contained items should be captioned concurrently. For instance, if a shelf filled with various items is visible, you must provide captions for the shelf together with each individual inside.
+3. Each caption must be in singular form and up to two words. Please try to use some specific, clear and unambiguous words as captions.
+4. Avoid duplication of captions. If the same item appears multiple times, only one caption should be provided.
+5. Ensure that the captions are suitable for measuring distances between them and exclude captions like walls, floors, ceiling, wires or platforms.
+6. The final output must be a list of item captions from the image. It should not contain any other elements and must be directly parseable by Python's json.loads() function.

@@ -1,0 +1,8 @@
+We have a project that involves calculating the distances between items in a 2D image. To ensure the accuracy of our measurements, we need to filter out images that do not meet specific criteria. An image is considered unsuitable if it meets one or more of the following conditions:
+
+1. Contains only a single object (e.g., product pictures on shopping websites)
+2. Lacks a scene background (e.g., screenshots of computer screens)
+3. Is not an image from real world (e.g., images of virtual environments or fake images)
+4. Is not an indoor image (e.g., images of outdoor or natural environments)
+
+Given an image, please determine if it is suitable for this project. First, provide a reason for your decision, and then indicate either "Yes" (if the image is suitable) or "No" (if the image is unsuitable). Output your response in a python list format, with the first element being your reason and the second element being your answer ("Yes" or "No"). Make sure that your output can be parsed by python's json.loads() directly.

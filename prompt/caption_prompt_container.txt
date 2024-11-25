@@ -1,0 +1,12 @@
+Given an image, please create a JSON representation where each entry consists of a key "object" with a numerical suffix starting from 1. The value of each "object" key contains a "description" key and a "container" key, in which the value of the "description" key is a concise, up to eight-word sentence describing each main, clear, distinct object in the image while the "container" key's value should be either "True" or "False", indicating whether the targeted object has other sub-objects on or inside it
+
+Please note the following requirements:
+1. Each entry should uniquely describe one element without repeating values. 
+2. For the "container" key, its value should be "True" if the object is containing or supporting other objects, and "False" otherwise. 
+3. The possible container that could only be a desk, shelf, bed or other similar items. Please consider a desk and its tablecloth as one object.
+4. Do not miss any suitable object.
+5. Ensure that the described objects are suitable for measuring distances between them and exclude elements like walls, floors or marble platforms. 
+6. If similar objects occur multiply times in the image, you should describe them according to their positions. For example, if there are three shelves, you may describe them as left, center and right shelves respectively.
+7. Make sure that your output can be parsed by python's  json.loads() directly.
+
+Following is an example: {"object1": { "description": "trash bin with liner", "container": "False"},"object2": { "description": "retangular dinner table with tablecloths", "container": "True" },"object3": { "description": "wooden shelf with electronic devices", "container": "True" }}

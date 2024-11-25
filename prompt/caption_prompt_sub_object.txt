@@ -1,0 +1,12 @@
+Given an image of a "{container}", please create a JSON representation where each entry consists of a key "object" with a numerical suffix starting from 1. The value of each "object" key contains a "description" key alue of the "description" key is a concise, up to eight-word sentence describing each main, clear, distinct object on or inside the "{container}".
+
+Please note the following requirements:
+1. Each entry should uniquely describe one element without repeating values. 
+2. Only describe the objects that is on or inside the "{container}". Please ignore other parts of the image.
+3. Do not miss any small object that is on or inside the "{container}"
+4. Do not include the objects that are near, under or behind the "{container}". If there is no suitable object, please return -1.
+5. Do not include the "{container}" in your output.
+5. Ensure that the described objects are suitable for measuring distances between them and exclude elements like walls or floors. 
+6. Make sure that your output can be parsed by python's  json.loads() directly.
+
+Following is an example: {"object1": { "description": "rectangular silver tray"},"object2": { "description": "bottle of wine on table"},"object3": { "description": "round decorative doily"}}

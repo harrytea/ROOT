@@ -1,0 +1,16 @@
+Please analyze an image that contains {count} bounding boxes. Each bounding box corresponds to one color. Your task is to identify the bounding box that best corresponds to the provided description of an object within the image and return the color of your selected bounding box. 
+
+In the image, there are {count} bounding boxes. The colors of these boxes include: {colors}.
+
+Following is the requirement:
+1. You must select the most appropriate bounding box and object based on orientation words within the description, such as "left", "center/middle" or "right." For instance, if an image contains three side-by-side computers, and the description states "center computer", you should output the color corresponding to the computer in the center.
+2. It is possible that there are three similar objects (left, center and right respectively) in the imag while only two of thems are enclosed by bounding boxes. In this situation, you still need to select the the suitable bounding box based on the relative position of these three objects.
+3. Please provide an output in JSON format with the keys "reason" and "color". In the "reason" value, explain the rationale behind your selection, and in the "color" value, return the color of your chosen bounding box.
+4. If there is no orientation word, you should select the bounding box that best corresponds to the given description. If none of the bounding box meets the description, you should select one randomly.
+5. You can only select one box and the "color" value can only be one of the element from this color list: {colors}
+6. The order of the color list is meaningless. You should select the bounding box and its corresponding color according to the description.
+7. Make sure that your output can be parsed by python's  json.loads() directly.
+
+
+Following is the provided description:
+"{description}" 

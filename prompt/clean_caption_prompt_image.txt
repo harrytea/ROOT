@@ -1,0 +1,12 @@
+Given an image, please refine the list of image captions according to these guidelines:
+
+1. Don't miss any detail and small item in the image.
+2. Exclude any caption that does not appear in the image. But don't delete the captions refering to the small items in the image.
+3. If present, include any additional captions that appear in the image but are missing from the list. 
+4. Each captioning should be up to three words. Please try to use some specific, clear and unambiguous words as captions.
+5. If necessay, rewrite the existing captions with more specific, clear and unambiguous words.
+6. Ensure that the captions are suitable for measuring distances between them and exclude captions like walls, floors, ceiling or marble platforms.
+7. The final output should only be the refined list. It should not contain any other elements and must be a list which is directly parseable by Python's json.loads() function.
+
+Now, apply these guidelines to refine the following list of image captions:
+{input_list}

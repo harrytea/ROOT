@@ -1,0 +1,15 @@
+Please refine a list of image captions according to these guidelines:
+
+1. Exclude any word that is not a noun.
+2. If there are some similar words in the list, only retain the most unambiguous word. For example, you should only retrain "air conditioner" from ["vent", "air conditioning", "air conditioner"].
+3. Exclude captions that do not refer to specific items, such as comment, device, mold and furniture.
+4. Exclude captions that are not suitable for distance measurement between them, such as wall, room, platform, floor, ceiling and building.
+5. The final output should only be the refined list. It should not contain any other elements and must be directly parseable by Python's json.loads() function.
+
+Here's an example for reference:
+
+Input list: [bed, building, bunk bed, clothesline, dormitory, equipment, floor, laundry, room, mold]
+Output: [bunk bed, clothesline]
+
+Now, apply these guidelines to refine the following list of image captions:
+{input_list}
