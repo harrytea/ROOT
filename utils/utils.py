@@ -29,11 +29,11 @@ def get_file_list(path, img_extensions=('.jpg', '.jpeg', '.png', '.bmp'), recurs
 
 
 
-def visualize_detections(image_path, boxes, pred_phrases, output_dir, flag):
+def visualize_detections(image_path, boxes, pred_phrases, output_dir, flag, save_file=True):
     """Visualize detection results"""
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    plt.figure(figsize=(10, 10))
+    plt.figure(figsize=(5, 5))
     plt.imshow(image)
     ax = plt.gca()
     
@@ -57,11 +57,14 @@ def visualize_detections(image_path, boxes, pred_phrases, output_dir, flag):
     adjust_text(texts)
     plt.axis('off')
 
-    os.makedirs(output_dir, exist_ok=True)
-    file_name = osp.basename(image_path).split('.')[0]
-    output_filename = f"{file_name}_{flag}.jpg"
-    plt.savefig(osp.join(output_dir, output_filename), bbox_inches="tight", dpi=600, pad_inches=0.0)
-    plt.close()
+    if save_file:
+        os.makedirs(output_dir, exist_ok=True)
+        file_name = osp.basename(image_path).split('.')[0]
+        output_filename = f"{file_name}_{flag}.jpg"
+        plt.savefig(osp.join(output_dir, output_filename), bbox_inches="tight", dpi=600, pad_inches=0.0)
+        plt.close()
+    else:
+        plt.show()
 
 def save_json(filepath, data):
     """Save data to JSON file"""

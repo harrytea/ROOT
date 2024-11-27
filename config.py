@@ -6,6 +6,7 @@ class Config:
     device: str = 'cuda'
     vlm_model: str = 'gpt-4v'
     grounded_checkpoint: str = "IDEA-Research/grounding-dino-base"
+    depth_checkpoint: str = "local::/mnt/d/ROOT/foundation/Depth_Anything/depth_anything_metric_depth_indoor.pt"
     box_threshold: float = 0.3
     iou_threshold: float = 0.5
     min_threshold: float = 0.15
@@ -21,6 +22,7 @@ class Config:
         parser.add_argument('--device', type=str, default='cuda')
         parser.add_argument('--vlm_model', type=str, default='gpt-4v')
         parser.add_argument('--grounded_checkpoint', type=str, default="IDEA-Research/grounding-dino-base")
+        parser.add_argument('--depth_checkpoint', type=str, default="local::/mnt/d/ROOT/foundation/Depth_Anything/depth_anything_metric_depth_indoor.pt")
         parser.add_argument('--box_threshold', type=float, default=0.3)
         parser.add_argument('--iou_threshold', type=float, default=0.5)
         parser.add_argument('--min_threshold', type=float, default=0.15)
