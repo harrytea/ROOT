@@ -1,0 +1,192 @@
+{
+    "teal upholstered armchair": {
+        "box": [
+            485.4993896484375,
+            639.869384765625,
+            817.348388671875,
+            979.5875854492188
+        ],
+        "score": 0.873,
+        "phrase": "teal upholstered armchair"
+    },
+    "dark wooden sideboard": {
+        "box": [
+            227.54908752441406,
+            610.8643798828125,
+            669.5662841796875,
+            891.73486328125
+        ],
+        "score": 0.432,
+        "phrase": "dark wooden sideboard"
+    },
+    "white round table with blue tablecloth": {
+        "box": [
+            768.3877563476562,
+            677.5822143554688,
+            1045.3349609375,
+            1034.8258056640625
+        ],
+        "score": 0.885,
+        "phrase": "white round table with blue tablecloth"
+    },
+    "dark brown curtain": {
+        "box": [
+            687.2561645507812,
+            4.6297607421875,
+            907.7366943359375,
+            653.8257446289062
+        ],
+        "score": 0.853,
+        "phrase": "dark brown curtain"
+    },
+    "white sheer curtain": {
+        "box": [
+            840.2673950195312,
+            3.935882568359375,
+            1195.73193359375,
+            972.17333984375
+        ],
+        "score": 0.496,
+        "phrase": "white sheer curtain"
+    },
+    "blue round rug": {
+        "box": [
+            494.3857116699219,
+            859.2504272460938,
+            852.0506591796875,
+            1034.187255859375
+        ],
+        "score": 0.88,
+        "phrase": "blue round rug"
+    },
+    "traditional table lamp": {
+        "box": [
+            22.897605895996094,
+            424.8582763671875,
+            154.87741088867188,
+            718.9227294921875
+        ],
+        "score": 0.875,
+        "phrase": "traditional table lamp"
+    },
+    "vase with purple flowers": {
+        "box": [
+            321.02783203125,
+            391.317138671875,
+            465.1204833984375,
+            622.614990234375
+        ],
+        "score": 0.617,
+        "phrase": "vase with purple flowers"
+    },
+    "white ceramic vases on sideboard": {
+        "box": [
+            381.8939208984375,
+            558.8728637695312,
+            584.8175048828125,
+            628.8233032226562
+        ],
+        "score": 0.302,
+        "phrase": "white ceramic vases on sideboard"
+    },
+    "glass vase with cotton branches": {
+        "box": [
+            805.8267211914062,
+            430.26263427734375,
+            918.0391845703125,
+            702.2505493164062
+        ],
+        "score": 0.576,
+        "phrase": "glass vase with cotton branches"
+    },
+    "white cushion on armchair": {
+        "box": [
+            607.4884643554688,
+            691.601806640625,
+            760.0208740234375,
+            799.1512451171875
+        ],
+        "score": 0.86,
+        "phrase": "white cushion on armchair"
+    },
+    "white vase with narrow top": {
+        "box": [
+            467.1526184082031,
+            569.32275390625,
+            507.80023193359375,
+            623.9530029296875
+        ],
+        "score": 0.387,
+        "phrase": "white vase with narrow top"
+    },
+    "small white spherical vase": {
+        "box": [
+            513.7034912109375,
+            574.8660278320312,
+            550.265625,
+            599.3681640625
+        ],
+        "score": 0.361,
+        "phrase": "small white spherical vase"
+    },
+    "medium white cylindrical vase": {
+        "box": [
+            420.1510314941406,
+            573.0,
+            462.8549499511719,
+            622.1716918945312
+        ],
+        "score": 0.351,
+        "phrase": "medium white cylindrical vase"
+    },
+    "tall white cylindrical vase": {
+        "box": [
+            371.57598876953125,
+            540.505615234375,
+            413.951171875,
+            624.3590087890625
+        ],
+        "score": 0.613,
+        "phrase": "tall white cylindrical vase"
+    },
+    "colorful abstract painting": {
+        "box": [
+            312.64813232421875,
+            540.41796875,
+            422.8216552734375,
+            604.8497924804688
+        ],
+        "score": 0.598,
+        "phrase": "colorful abstract painting"
+    },
+    "clear glass bottle with contents": {
+        "box": [
+            822.1647338867188,
+            588.6139526367188,
+            886.2406005859375,
+            702.3369140625
+        ],
+        "score": 0.903,
+        "phrase": "clear glass bottle with contents"
+    },
+    "white ceramic plate with gold rim": {
+        "box": [
+            880.585205078125,
+            679.955810546875,
+            997.020751953125,
+            703.5094604492188
+        ],
+        "score": 0.437,
+        "phrase": "white ceramic plate with gold rim"
+    },
+    "metallic bottle cap on plate": {
+        "box": [
+            877.718017578125,
+            691.050048828125,
+            900.47314453125,
+            708.5068359375
+        ],
+        "score": 0.334,
+        "phrase": "metallic bottle cap on plate"
+    }
+}

@@ -3,18 +3,16 @@ import numpy as np
 from PIL import Image
 import os.path as osp
 import os
-import cv2
 from foundation.Depth_Anything.metric_depth.zoedepth.models.builder import build_model
 from foundation.Depth_Anything.metric_depth.zoedepth.utils.config import get_config
 import torchvision.transforms as transforms
+import cv2
 
 
 class IndoorDepthEstimator:
     def __init__(self, config):
         self.config = config
         self.model = self._init_depth_model()
-
-
 
     def _init_depth_model(self):
         print("Loading depth estimation model...")
@@ -25,8 +23,11 @@ class IndoorDepthEstimator:
         return model
 
     def _prepare_output_dir(self, image_path):
-        output_dir = osp.join(self.config.output_dir, osp.basename(osp.dirname(image_path)), 
-                             osp.basename(image_path).split(".")[0])
+        output_dir = osp.join(
+            self.config.output_dir, 
+            osp.basename(osp.dirname(image_path)), 
+            osp.basename(image_path).split(".")[0]
+        )
         os.makedirs(output_dir, exist_ok=True)
         return output_dir
 
@@ -34,20 +35,16 @@ class IndoorDepthEstimator:
         output_dir = self._prepare_output_dir(image_path)
         depth_output_path = osp.join(output_dir, "depth_map.png")
         depth_range_path = osp.join(output_dir, "depth_range.npy")
-        
-        # if osp.exists(depth_output_path) and osp.exists(depth_range_path):
-        #     depth_map = cv2.imread(depth_output_path, cv2.IMREAD_UNCHANGED)
-        #     depth_range = np.load(depth_range_path, allow_pickle=True).item()
-        #     depth_min = depth_range['min']
-        #     depth_max = depth_range['max']
-        #     if depth_max - depth_min > 0:
-        #         depth_map = depth_min + (depth_map.astype(float) * (depth_max - depth_min) / 255)
-        #     else:
-        #         depth_map = np.full_like(depth_map, depth_min, dtype=float)
-        #     return depth_map
+        depth_info_path = osp.join(output_dir, "depth_info.npy")
 
+        # Check cache if enabled
+        if self.config.use_cache and osp.exists(depth_output_path) and osp.exists(depth_info_path):
+            depth_map = cv2.imread(depth_output_path, cv2.IMREAD_UNCHANGED)
+            depth_info = np.load(depth_info_path)
+            return depth_map, depth_info
+
+        # If no cache or cache disabled, process the depth map
         image = Image.open(image_path)
-        # inputs = self.processor(images=image, return_tensors="pt")
         depth_map = self.predict_depth(image)
 
         # Process depth map
@@ -60,13 +57,15 @@ class IndoorDepthEstimator:
         else:
             depth_map = np.full_like(depth_map, 128, dtype=np.uint8)
 
-        # Save depth map
+        # Save depth map and original depth information
         depth_image = Image.fromarray(depth_map)
         depth_image.save(depth_output_path)
+        np.save(depth_info_path, depth_info)
         
-        # Save depth range information to the same directory
+        # Save depth range information
         depth_range = {'min': float(depth_min), 'max': float(depth_max)}
         np.save(depth_range_path, depth_range)
+        
         return depth_map, depth_info
 
     def predict_depth(self, color_image):

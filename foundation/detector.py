@@ -1,6 +1,6 @@
 import torch
 import torchvision
-from utils.utils import calculate_iou, convert_boxes, draw_bounding_boxes, save_json, vlm_inference
+from utils.util import calculate_iou, convert_boxes, draw_bounding_boxes, save_json, vlm_inference
 import copy
 import json
 import time
@@ -90,10 +90,10 @@ class BoxSelector:
         full_color_list = ["black", "white", "red", "green", "blue", "yellow", "magenta", "cyan"]
         boxes_list = boxes.clone().tolist()
         selected_color_list = str(full_color_list[:len(boxes_list)])
-        
+
         output_subdir = osp.join(self.config.output_dir, osp.basename(osp.dirname(image_path)), osp.basename(image_path).split(".")[0])
         os.makedirs(output_subdir, exist_ok=True)
-        new_image_path = draw_bounding_boxes(image_path, boxes_list, output_subdir, f"{osp.basename(output_subdir)}_{phrase}")
+        new_image_path = draw_bounding_boxes(image_path, boxes_list, output_subdir, f"{phrase}")
 
         prompt_path = "./prompt/selecting_box_prompt.txt"
         prompt = open(prompt_path).read()
@@ -209,7 +209,7 @@ class BoxDetector:
                 print(f"- Failed to select valid box for: '{phrase}'\n{'='*50}")
                 continue
                 
-            print(f"- Detected box: {[round(x, 3) for x in boxes_selected.tolist()]}, score: {score:.3f}\n{'='*50}")
+            print(f"- Detected box for '{phrase}': {[round(x, 3) for x in boxes_selected.tolist()]}, score: {score:.3f}\n{'='*50}")
             final_boxes.append(boxes_selected)
             scores.append(score)
             pred_phrases.append(phrase)

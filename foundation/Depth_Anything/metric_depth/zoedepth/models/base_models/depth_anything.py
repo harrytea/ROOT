@@ -337,9 +337,18 @@ class DepthAnythingCore(nn.Module):
         img_size = kwargs.pop("img_size", [384, 384])
         
         depth_anything = DPT_DINOv2(out_channels=[256, 512, 1024, 1024], use_clstoken=False)
+        
+        # 检查本地文件路径
+        local_path = "ckpts/depth_anything_vitl14.pth"
         model_url = "https://huggingface.co/spaces/LiheYoung/Depth-Anything/resolve/main/checkpoints/depth_anything_vitl14.pth"
-        state_dict = torch.hub.load_state_dict_from_url(
-            model_url, map_location='cpu', progress=True, file_name='depth_anything_vitl14.pth')
+        
+        try:
+            state_dict = torch.load(local_path, weights_only=True, map_location='cpu')
+        except (FileNotFoundError, IOError):
+            print(f"Local weights not found at {local_path}, downloading from {model_url}")
+            state_dict = torch.hub.load_state_dict_from_url(
+                model_url, map_location='cpu', progress=True, file_name='depth_anything_vitl14.pth')
+        
         depth_anything.load_state_dict(state_dict)
         
         kwargs.update({'keep_aspect_ratio': force_keep_ar})

@@ -1,0 +1,16 @@
+You are an AI language model tasked with simplifying a single product description. Please take the following descriptive phrase and reduce it to its simplest form while keeping the core meaning intact. Remove unnecessary adjectives and details, but retain the main noun and essential describing words.
+
+For example:
+- "white round table with blue tablecloth" → "white round table"
+- "teal upholstered armchair" → "teal armchair"
+- "dark wooden sideboard" → "wooden sideboard"
+- "glass vase with cotton branches" → "glass vase"
+
+Please simplify the following phrase:
+[Insert the phrase here]
+
+Return the simplified version in the following format:
+{
+    "original_phrase": "[Original Phrase]",
+    "simplified_phrase": "[Simplified Phrase]"
+}

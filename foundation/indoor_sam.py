@@ -18,13 +18,16 @@ class IndoorSAMEstimator:
 
     def _init_sam_model(self):
         print("Loading SAM model...")
-        processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
-        model = SamModel.from_pretrained("facebook/sam-vit-huge").to(self.device)
+        processor = SamProcessor.from_pretrained(self.config.sam_checkpoint)
+        model = SamModel.from_pretrained(self.config.sam_checkpoint).to(self.device)
         return model, processor
 
     def _prepare_output_dir(self, image_path):
-        output_dir = osp.join(self.config.output_dir, osp.basename(osp.dirname(image_path)), 
-                             osp.basename(image_path).split(".")[0])
+        output_dir = osp.join(
+            self.config.output_dir, 
+            osp.basename(osp.dirname(image_path)), 
+            osp.basename(image_path).split(".")[0]
+        )
         os.makedirs(output_dir, exist_ok=True)
         return output_dir
 
@@ -37,10 +40,12 @@ class IndoorSAMEstimator:
     def process_image(self, image_path, input_boxes):
         output_dir = self._prepare_output_dir(image_path)
         overlay_output_path = osp.join(output_dir, "mask_overlay.png")
-        if osp.exists(osp.join(output_dir, "masks.npy")) and osp.exists(osp.join(output_dir, "masks_info.json")):
-            with open(osp.join(output_dir, "masks_info.json"), 'r') as f:
+        mask_output_path = osp.join(output_dir, "masks.npy")
+        mask_info_path = osp.join(output_dir, "masks_info.json")
+        if self.config.use_cache and osp.exists(mask_info_path) and osp.exists(mask_output_path):
+            with open(mask_info_path, 'r') as f:
                 masks_info_dict = json.load(f)
-            masks = np.load(osp.join(output_dir, "masks.npy"))
+            masks = np.load(mask_output_path)
             return masks, masks_info_dict["selected_idx"]
 
         image = Image.open(image_path).convert("RGB")
@@ -50,7 +55,7 @@ class IndoorSAMEstimator:
         selected_boxes = []
         selected_idx = []
         
-        for idx, box in enumerate(tqdm(input_boxes)):
+        for idx, box in enumerate(tqdm(input_boxes, desc="Processing masks")):
             inputs = self.processor(image, input_boxes=[[box]], return_tensors="pt").to(self.device)
             with torch.no_grad():
                 outputs = self.model(**inputs)
@@ -75,10 +80,10 @@ class IndoorSAMEstimator:
                 selected_idx.append(idx)
             all_masks.append(current_mask)
 
-        # 保存 masks 为 npy 文件
-        np.save(osp.join(output_dir, "masks.npy"), np.array(all_masks))
+        
+        np.save(mask_output_path, np.array(all_masks))
         masks_info_dict = {"selected_idx": selected_idx}
-        with open(osp.join(output_dir, "masks_info.json"), 'w') as f:
+        with open(mask_info_path, 'w') as f:
             json.dump(masks_info_dict, f)
         
         self.visualize_masks(image_path, masks, overlay_output_path)

@@ -20,7 +20,7 @@ class DINOv2(nn.Module):
             raise NotImplementedError
 
         if load_from is not None:
-            d = torch.load(load_from, map_location='cpu')
+            d = torch.load(load_from, weights_only=True, map_location='cpu')
             new_d = {}
             for key, value in d.items():
                 if 'pretrained' in key:

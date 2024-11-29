@@ -10,3 +10,5 @@ outputs/2D-Scene/*
 outputs/asset/0001682/pcd*
 outputs/asset/0001682/rgb_*
 foundation/Depth_Anything/depth_anything_metric_depth_indoor.pt
+outputs/Qwen2-VL-7B-FULL-full
+ckpts

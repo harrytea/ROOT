@@ -5,8 +5,7 @@ from PIL import Image
 import json
 
 from config import Config
-from utils.utils import (
-    get_file_list, 
+from utils.util import (
     visualize_detections, 
     save_json,
     expand_box,
@@ -18,7 +17,7 @@ from foundation.detector import BoxDetector
 
 
 class IndoorObjectDetector:
-    def __init__(self, config: Config):
+    def __init__(self, config):
         self.config = config
         self.vlm = self._init_vlm()
         self.box_detector = self._init_grounded_dino()
@@ -30,6 +29,11 @@ class IndoorObjectDetector:
             vlm = GPT4VHandler()
             vlm.initialize_llm()
             return vlm
+        elif self.config.vlm_model == "gpt-4v-openai":
+            from api.gpt4v_openai import GPT4VOpenAIHandler
+            vlm = GPT4VOpenAIHandler()
+            vlm.initialize_llm()
+            return vlm
         return None
 
     def _init_grounded_dino(self):
@@ -39,30 +43,35 @@ class IndoorObjectDetector:
         return BoxDetector(model, processor, self.vlm, self.config)
 
     def _prepare_output_dir(self, image_path):
-        output_dir = osp.join(self.config.output_dir, osp.basename(osp.dirname(image_path)), osp.basename(image_path).split(".")[0])
+        output_dir = osp.join(
+            self.config.output_dir, 
+            osp.basename(osp.dirname(image_path)), 
+            osp.basename(image_path).split(".")[0]
+        )
         os.makedirs(output_dir, exist_ok=True)
         return output_dir
 
     def process_image(self, image_path):
         output_dir = self._prepare_output_dir(image_path)
-        if osp.exists(osp.join(output_dir, "final_result.json")):
+        
+        if self.config.use_cache and osp.exists(osp.join(output_dir, "final_result.json")):
             with open(osp.join(output_dir, "final_result.json")) as f:
                 results = json.load(f)
             return results["boxes"], results["scores"], results["predictions"]
         
-        # Load container caption
-        if osp.exists(osp.join(output_dir, "container_caption.json")):
-            container_caption = json.load(open(osp.join(output_dir, "container_caption.json")))
+        container_caption_path = osp.join(output_dir, "container_caption.json")
+        if self.config.use_cache and osp.exists(container_caption_path):
+            with open(container_caption_path) as f:
+                container_caption = json.load(f)
         else:
             container_caption = self._load_container_caption(image_path)
-            save_json(osp.join(output_dir, "container_caption.json"), container_caption)
-
+            save_json(container_caption_path, container_caption)
+        
         # Process detections
         boxes, scores, pred_phrases = self._process_detections(container_caption, image_path, output_dir)
         results = {"boxes": [box.tolist() for box in boxes], "scores": scores, "predictions": pred_phrases}
         save_json(f"{output_dir}/final_result.json", results)
-        visualize_detections(image_path, boxes, pred_phrases, output_dir, 'final_result')
-        return boxes, scores, pred_phrases
+        return [box.tolist() for box in boxes], scores, pred_phrases
 
 
     def _process_detections(self, caption, image_path, output_dir):

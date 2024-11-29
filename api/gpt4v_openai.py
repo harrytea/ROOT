@@ -13,7 +13,7 @@ from openai import OpenAI
 sys.path.append(os.getcwd())
 sys.path.append("..")
 
-class GPT4VHandler:
+class GPT4VOpenAIHandler:
     def __init__(self):
         pass
     
@@ -53,7 +53,7 @@ class GPT4VHandler:
 
 
 if __name__ == '__main__':
-    my_vlm = GPT4VHandler()
+    my_vlm = GPT4VOpenAIHandler()
     my_vlm.initialize_llm()
     answer = my_vlm.run_llm("what is this", "path/to/your/image.jpg")
     print(answer)

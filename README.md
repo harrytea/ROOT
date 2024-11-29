@@ -11,8 +11,7 @@
 **Yonghui Wang<sup>1,2</sup>, Shi-Yong Chen<sup>2</sup>, Zhenxing Zhou<sup>2</sup>, Siyi Li<sup>2</sup>, Haoran Li<sup>1,2</sup>, Wengang Zhou<sup>1</sup>, Houqiang Li<sup>1</sup>**  
 <sup>1</sup> University of Science and Technology of China (USTC)  <sup>2</sup> Game AI Center, Tencent IEG  
 
-[![Arxiv](https://img.shields.io/badge/cs.CV-Paper-b31b1b?logo=arxiv&logoColor=red)](https://arxiv.org/abs/2411.15714) 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](./LICENSE)
+[![Arxiv](https://img.shields.io/badge/2411.15714-Paper-b31b1b?logo=arxiv&logoColor=red)](https://arxiv.org/abs/2411.15714) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](./LICENSE)
 
 </div>
 
@@ -21,14 +20,14 @@
 ## 💡 Introduction
 
 <div align="center">
-  <img src="asset/arch.jpg" alt="System Architecture" width="80%">
+  <img src="asset/arch.jpg" alt="System Architecture" width="90%">
 </div>
 
 **ROOT** is a **Vision-Language Model (VLM)**-based system for **indoor scene understanding**.  
 It combines **GPT-4V** with vision models to detect objects, extract spatial metadata, and generate hierarchical scene graphs, which handle relationships using support, contain, hang and attach.
 
 <div align="center">
-  <img src="asset/example.png" alt="Hierarchical scene graph" width="80%">
+  <img src="asset/example.png" alt="Hierarchical scene graph" width="90%">
 </div>
 
 ---

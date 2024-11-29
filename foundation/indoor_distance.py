@@ -13,8 +13,11 @@ class IndoorDistanceEstimator:
         self.intrinsic_parameters = None
 
     def _prepare_output_dir(self, image_path):
-        output_dir = osp.join(self.config.output_dir, osp.basename(osp.dirname(image_path)), 
-                             osp.basename(image_path).split(".")[0])
+        output_dir = osp.join(
+            self.config.output_dir, 
+            osp.basename(osp.dirname(image_path)), 
+            osp.basename(image_path).split(".")[0]
+        )
         os.makedirs(output_dir, exist_ok=True)
         return output_dir
 

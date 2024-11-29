@@ -17,6 +17,7 @@ class Qwen2VLHandler:
         # self.model = Qwen2VLForConditionalGeneration.from_pretrained(checkpoint, torch_dtype="auto", device_map="auto")
         # We recommend enabling flash_attention_2 for better acceleration and memory saving, especially in multi-image and video scenarios.
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(checkpoint,torch_dtype="auto",attn_implementation="flash_attention_2",device_map="auto")
+        # self.model = Qwen2VLForConditionalGeneration.from_pretrained(checkpoint,torch_dtype="auto",device_map="cpu")
         self.processor = AutoProcessor.from_pretrained(checkpoint)
     
     def run_llm(self, query, image_path):
@@ -50,8 +51,9 @@ class Qwen2VLHandler:
                 answer = self.processor.batch_decode(generated_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True)
                 answer = answer[0]
                 break
-            except:
-                print()
+            except Exception as e:
+                print(f"Error in Qwen2VLHandler.run_llm: {e}")
+                
         return answer
 
 
