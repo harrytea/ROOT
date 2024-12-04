@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="ROOT: VLM based System for Indoor Scene Understanding and Beyond">
+  <meta name="keywords" content="System, VLM, Indoor Scene Understanding">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ROOT</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.4/css/academicons.min.css"
+    integrity="sha512-UGBFeviWB9BvmXhNE4TBh2SEIMREKzr3QuDZUzNrnXF6NzHgzGZP/PXmVVRqaZtDHJO5biLkz3k3lb1B8xAcBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="logo2.png" type="image/png">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+  <script>
+    window.addEventListener('load', function () {
+      console.log('Window loaded');
+      if (window.jQuery) {
+        console.log('jQuery is loaded');
+      } else {
+        console.error('jQuery is not loaded');
+      }
+    });
+  </script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+  <style>
+    .author-name {
+      color: #363636;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .author-name:hover {
+      color: #485fc7;
+      text-decoration: none;
+    }
+
+    .author-block {
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    .institution-block {
+      display: inline-block;
+      font-size: 1rem;
+    }
+
+    .publication-authors {
+      line-height: 1.5;
+    }
+
+    .publication-institutions {
+      line-height: 1.4;
+    }
+
+    .citation-block {
+      position: relative;
+    }
+
+    .citation-block pre {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-radius: 4px;
+    }
+
+    .citation-block button {
+      margin-top: 0.5rem;
+    }
+
+    .results-carousel {
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    .results-carousel .item {
+      margin: 0 10px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .results-carousel .item video,
+    .results-carousel .item img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .results-carousel .item p {
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    .video-container {
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #teaser {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .slider-nav-interactive {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      padding: 0 50px;
+    }
+
+    .nav-item {
+      padding: 10px;
+    }
+
+    .nav-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-item p {
+      margin-top: 8px;
+      text-align: center;
+      font-size: 1rem;
+      color: #333;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    /* 箭头按钮样式 */
+    .slick-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      z-index: 1;
+      cursor: pointer;
+      border: none;
+      color: #485fc7;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(4px);
+    }
+
+    .slick-arrow:hover {
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 12px rgba(72, 95, 199, 0.2);
+      transform: translateY(-50%) scale(1.1);
+      color: #364fc7;
+    }
+
+    .slick-arrow:focus {
+      outline: none;
+    }
+
+    .slick-prev {
+      left: 10px;
+    }
+
+    .slick-next {
+      right: 10px;
+    }
+
+    .slick-prev:before,
+    .slick-next:before {
+      display: none;
+    }
+
+    .slick-arrow i {
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .feature-display {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .hover-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .feature-display:hover .hover-overlay {
+      opacity: 1;
+    }
+
+    .feature-overlay ul li {
+      margin: 5px 0;
+    }
+
+    .feature-overlay ul li i {
+      margin-right: 8px;
+      color: #00d1b2;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+
+
+
+<body>
+
+  <!-- Title && Authors && Institutions -->
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column has-text-centered">
+        <h1 class="title is-1 publication-title">
+          <div class="title-container"
+            style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
+            <img src="logo2.png" alt="ROOT" class="title-logo" style="height: 80px; width: auto;">
+            <span class="title-text" style="font-size: 4rem; font-weight: 700;">ROOT</span>
+          </div>
+          <span class="subtitle is-3"
+            style="display: block; margin-top: 10px; color: #363636; font-size: 1.8rem; font-weight: 600;">
+            VLM based System for Indoor Scene Understanding and Beyond
+          </span>
+        </h1>
+        <div class="is-size-6 publication-authors" style="margin-top: 25px;">
+          <span class="author-block">
+            <a href="https://github.com/harrytea" class="author-name">Yonghui Wang</a><sup>1,2</sup>,</span>
+          <span class="author-block">
+            <a href="https://www.lamda.nju.edu.cn/chensy" class="author-name">Shi-Yong Chen</a><sup>2</sup>,</span>
+          <span class="author-block">
+            <span class="author-name">Zhenxing Zhou</span><sup>2</sup>,
+          </span>
+          <span class="author-block">
+            <a href="https://scholar.google.com.hk/citations?user=TZfjjcAAAAAJ&hl=en" class="author-name">Siyi
+              Li</a><sup>2</sup>,
+          </span>
+          <span class="author-block">
+            <a href="https://scholar.google.com.hk/citations?user=Rxl8r70AAAAJ&hl=zh-CN" class="author-name">Haoran
+              Li</a><sup>1,2</sup>,
+          </span>
+          <span class="author-block">
+            <a href="https://scholar.google.com/citations?user=8s1JF8YAAAAJ&hl=zh-CN" class="author-name">Wengang
+              Zhou</a><sup>1</sup>,
+          </span>
+          <span class="author-block">
+            <a href="https://scholar.google.com/citations?user=7sFMIKoAAAAJ&hl=zh-CN" class="author-name">Houqiang
+              Li</a><sup>1</sup>
+          </span>
+        </div>
+
+        <div class="is-size-6 publication-institutions" style="margin-top: 15px; color: #666;">
+          <span class="institution-block"><sup>1</sup>University of Science and Technology of China (USTC)</span>
+          <span class="institution-block" style="margin-left: 20px;"><sup>2</sup>Game AI Center, Tencent IEG</span>
+        </div>
+
+        <div class="column has-text-centered">
+          <div class="publication-links">
+            <!-- Paper Link -->
+            <span class="link-block">
+              <a href="https://arxiv.org/pdf/2411.15714" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <span class="material-icons" style="color: #ff4444;">description</span>
+                </span>
+                <span style="padding-left: 5px;">Paper</span>
+              </a>
+            </span>
+
+            <!-- arXiv Link -->
+            <span class="link-block">
+              <a href="https://arxiv.org/abs/2411.15714" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <span class="material-icons" style="color: #00cc99;">article</span>
+                </span>
+                <span style="padding-left: 5px;">arXiv</span>
+              </a>
+            </span>
+
+            <!-- GitHub Link -->
+            <span class="link-block">
+              <a href="https://github.com/harrytea/ROOT" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <span class="material-icons" style="color: #ffffff;">code</span>
+                </span>
+                <span style="padding-left: 5px;">Code</span>
+              </a>
+            </span>
+
+            <!-- Hugging Face Link -->
+            <span class="link-block">
+              <a href="https://huggingface.co/harrytea/ROOT" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <span class="material-icons" style="color: #ffcc00;">emoji_emotions</span>
+                </span>
+                <span style="padding-left: 5px;">Hugging Face</span>
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </section>
+
+
+
+
+  <!-- Video & Image Slider -->
+  <section class="hero teaser" style="margin-top: 3rem;">
+    <div class="container is-max-desktop">
+      <!-- Main Features Display -->
+      <div class="video-container">
+        <div class="columns is-centered">
+          <div class="column is-8">
+            <h3 class="title is-5 has-text-centered mb-3">Scene Attribute Analysis</h3>
+            <div class="feature-display" style="position: relative; border-radius: 8px; overflow: hidden;">
+              <div class="video-grid">
+                <div class="video-row">
+                  <video autoplay muted loop playsinline>
+                    <source src="./static/videos/video2.mp4" type="video/mp4">
+                  </video>
+                  <video autoplay muted loop playsinline>
+                    <source src="./static/videos/mask2.mp4" type="video/mp4">
+                  </video>
+                  <video autoplay muted loop playsinline>
+                    <source src="./static/videos/depth2.mp4" type="video/mp4">
+                  </video>
+                  <video autoplay muted loop playsinline>
+                    <source src="./static/videos/point3.mp4" type="video/mp4">
+                  </video>
+                </div>
+              </div>
+              <div class="feature-overlay hover-overlay">
+                <ul style="list-style: none; margin: 0; padding: 0; font-size: 0.9rem;">
+                  <li><i class="fas fa-object-group"></i> Object Detection</li>
+                  <li><i class="fas fa-vector-square"></i> Bounding Boxes</li>
+                  <li><i class="fas fa-draw-polygon"></i> Instance Masks</li>
+                  <li><i class="fas fa-layer-group"></i> Depth Maps</li>
+                  <li><i class="fas fa-cube"></i> Point Clouds</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-4">
+            <h3 class="title is-5 has-text-centered mb-3">Spatial Relationship</h3>
+            <div class="feature-display" style="position: relative; border-radius: 8px; overflow: hidden;">
+              <div class="video-grid">
+                <div class="video-row">
+                  <video autoplay muted loop playsinline>
+                    <source src="./static/videos/output.mp4" type="video/mp4">
+                  </video>
+                  <video autoplay muted loop playsinline>
+                    <source src="./static/videos/dis.mp4" type="video/mp4">
+                  </video>
+                </div>
+              </div>
+              <div class="feature-overlay hover-overlay">
+                <ul style="list-style: none; margin: 0; padding: 0; font-size: 0.9rem;">
+                  <li><i class="fas fa-project-diagram"></i> Hierarchical Scene Graphs</li>
+                  <li><i class="fas fa-arrows-alt-h"></i> Object Distance Estimation</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .video-grid {
+      width: 100%;
+      height: 150px;
+    }
+
+    .video-row {
+      display: flex;
+      gap: 4px;
+      height: 100%;
+    }
+
+    .video-row video {
+      flex: 1;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 4px;
+      min-width: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+
+  <script>
+    $(document).ready(function () {
+      console.log('Document ready');
+      if (typeof $.fn.slick === 'undefined') {
+        console.error('Slick is not loaded');
+        return;
+      }
+
+      try {
+        $('.slider-nav-interactive').slick({
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          dots: false,
+          arrows: true,
+          infinite: true,
+          speed: 500,
+          prevArrow: '<button type="button" class="slick-prev"><i class="fas fa-chevron-left"></i></button>',
+          nextArrow: '<button type="button" class="slick-next"><i class="fas fa-chevron-right"></i></button>',
+          responsive: [
+            {
+              breakpoint: 1024,
+              settings: {
+                slidesToShow: 2,
+                slidesToScroll: 1
+              }
+            },
+            {
+              breakpoint: 600,
+              settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+              }
+            }
+          ]
+        });
+        console.log('Slick initialized successfully');
+      } catch (error) {
+        console.error('Error initializing slick:', error);
+      }
+    });
+  </script>
+
+
+  <section class="section" style="padding-top: 1rem;">
+    <div class="container is-max-desktop">
+      <!-- Abstract. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Recently, Vision Language Models (VLMs) have experienced significant advancements, yet these models still
+              face challenges in spatial hierarchical reasoning within indoor scenes.
+            </p>
+            <p>
+              In this study, <strong>we introduce ROOT, a VLM-based system designed to enhance the analysis of indoor
+                scenes</strong>.
+              Specifically, we first develop an iterative object perception algorithm using GPT-4V to detect object
+              entities within indoor scenes. This is followed by employing vision foundation models to acquire
+              additional meta-information about the scene, such as bounding boxes. Building on this foundational data,
+              we propose a specialized VLM, SceneVLM, which is capable of generating spatial hierarchical scene graphs
+              and providing distance information for objects within indoor environments. This information enhances our
+              understanding of the spatial arrangement of indoor scenes. To train our SceneVLM, we collect over 610,000
+              images from various public indoor datasets and implement a scene data generation pipeline with a
+              semi-automated technique to establish relationships and estimate distances among indoor objects. By
+              utilizing this enriched data, we conduct various training recipes and finish SceneVLM.
+            </p>
+            <p>
+              Our experiments demonstrate that ROOT facilitates indoor scene understanding and proves effective in
+              diverse downstream applications, such as 3D scene generation and embodied AI. <strong>The code will be
+                released at
+                <a href="https://github.com/harrytea/ROOT">https://github.com/harrytea/ROOT</a>.</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--/ Abstract. -->
+
+
+
+      <!-- Approach Section -->
+      <div class="columns is-centered has-text-centered" style="margin-top: 3rem;">
+        <div class="column is-full">
+          <h2 class="title is-3">Approach</h2>
+          <div class="content has-text-centered">
+            <figure class="image" style="max-width: 1000px; margin: 0 auto;">
+              <img src="./static/images/approach.png" alt="ROOT Approach">
+              <figcaption class="mt-4 has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                Overview of our ROOT system. Given an indoor scene image, we first employ GPT-4V to iteratively detect
+                objects.
+                Then, we utilize vision foundation models to obtain meta-information such as bounding boxes. Finally,
+                our SceneVLM
+                generates spatial hierarchical scene graphs and provides distance information, enabling comprehensive
+                indoor scene understanding.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+      <!--/ Approach Section -->
+
+      <!-- Scene Graph Visualization Section -->
+      <div class="container is-max-desktop" style="margin-top: 4rem;">
+        <h3 class="title is-4 has-text-centered">Hierarchical Scene Graph Visualization</h3>
+        <div class="container slider-nav-interactive">
+          <div class="nav-item">
+            <img src="./static/images/0011712_relations.jpg">
+            <p>Bedroom Vanity</p>
+          </div>
+          <div class="nav-item">
+            <img src="./static/images/0011882_relations.jpg">
+            <p>Modern Dining Room</p>
+          </div>
+          <div class="nav-item">
+            <img src="./static/images/0011898_relations.jpg">
+            <p>Modern Living Room</p>
+          </div>
+          <div class="nav-item">
+            <img src="./static/images/0011960_relations.jpg">
+            <p>Modern Living Room</p>
+          </div>
+          <div class="nav-item">
+            <img src="./static/images/0012057_relations.jpg">
+            <p>Modern Living Room</p>
+          </div>
+          <div class="nav-item">
+            <img src="./static/images/0012227_relations.jpg">
+            <p>Dining Room</p>
+          </div>
+          <div class="nav-item">
+            <img src="./static/images/test_0000535_relations.jpg">
+            <p>Modern Living Room</p>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Video Demo -->
+      <div class="columns is-centered has-text-centered" style="margin-top: 45px;">
+        <div class="column is-full">
+          <h2 class="title is-3">Video Demo</h2>
+          <div class="publication-video" style="max-width: 1200px; margin: 20px auto;">
+            <div style="padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+              <div style="background: #f5f5f5; border-radius: 8px; overflow: hidden; position: relative;">
+                <video controls width="100%" playsinline
+                  style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #e0e0e0; background: #f5f5f5; display: block; margin: 0; position: relative; top: 0; left: 0;">
+                  <source src="./static/videos/demo2.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--/ Video Demo -->
+
+
+      <!-- Potential Applications Section -->
+      <div class="columns is-centered has-text-centered" style="margin-top: -80px;">
+        <div class="column is-full">
+          <h2 class="title is-3">Potential Applications</h2>
+
+          <!-- Five horizontal images -->
+          <div class="columns is-multiline is-centered" style="margin-bottom: 20px; max-width: 900px; margin-left: auto; margin-right: auto; padding-top: 2rem;">
+            <div class="column is-2-widescreen is-3-desktop">
+              <figure class="image">
+                <img src="./static/images/qa.svg" alt="Application 1" style="width: 80px; height: 80px; margin: 0 auto;">
+                <figcaption class="mt-2" style="font-size: 0.9rem; color: #555;">Scene VQA</figcaption>
+              </figure>
+            </div>
+            <div class="column is-2-widescreen is-3-desktop">
+              <figure class="image">
+                <img src="./static/images/indoor2.svg" alt="Application 2" style="width: 80px; height: 80px; margin: 0 auto;">
+                <figcaption class="mt-2" style="font-size: 0.9rem; color: #555;">Smart Placement</figcaption>
+              </figure>
+            </div>
+            <div class="column is-2-widescreen is-3-desktop highlighted-application">
+              <figure class="image">
+                <img src="./static/images/indoor.svg" alt="Application 5" style="width: 80px; height: 80px; margin: 0 auto;">
+                <figcaption class="mt-2" style="font-size: 0.9rem; color: #555;">Scene Generation</figcaption>
+              </figure>
+              <div class="arrow-down">
+                <i class="fas fa-arrow-down" style="color: #485fc7; font-size: 24px; margin-top: 10px;"></i>
+              </div>
+            </div>
+            <div class="column is-2-widescreen is-3-desktop">
+              <figure class="image">
+                <img src="./static/images/game.svg" alt="Application 3" style="width: 80px; height: 80px; margin: 0 auto;">
+                <figcaption class="mt-2" style="font-size: 0.9rem; color: #555;">Game AI</figcaption>
+              </figure>
+            </div>
+            <div class="column is-2-widescreen is-3-desktop">
+              <figure class="image">
+                <img src="./static/images/robot.svg" alt="Application 4" style="width: 80px; height: 80px; margin: 0 auto;">
+                <figcaption class="mt-2" style="font-size: 0.9rem; color: #555;">Embodied AI</figcaption>
+              </figure>
+            </div>
+          </div>
+
+          <!-- Add transition text -->
+          <p class="has-text-centered" style="margin: 20px auto; max-width: 600px; color: #666; font-style: italic;">
+            Below we showcase a detailed example of Scene Generation with <a href="https://github.com/allenai/Holodeck" target="_blank" style="color: #485fc7; text-decoration: underline;">Holodeck</a>. For other applications, please refer to our paper.
+          </p>
+
+          <style>
+            .highlighted-application {
+              position: relative;
+              padding: 15px;
+              border-radius: 8px;
+              background: rgba(72, 95, 199, 0.1);
+              box-shadow: 0 2px 8px rgba(72, 95, 199, 0.2);
+              transition: all 0.3s ease;
+            }
+
+            .highlighted-application:hover {
+              transform: translateY(-5px);
+              box-shadow: 0 4px 12px rgba(72, 95, 199, 0.3);
+            }
+
+            .arrow-down {
+              position: absolute;
+              bottom: -15px;
+              left: 50%;
+              transform: translateX(-50%);
+              animation: bounce 2s infinite;
+            }
+
+            @keyframes bounce {
+              0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+              }
+              40% {
+                transform: translateX(-50%) translateY(-10px);
+              }
+              60% {
+                transform: translateX(-50%) translateY(-5px);
+              }
+            }
+          </style>
+
+          <!-- Holodeck Showcase Section -->
+          <div class="content has-text-justified" style="max-width: 800px; margin: 20px auto;">
+            <div class="columns is-centered is-vcentered">
+              <!-- Logos and Arrow Container -->
+              <div class="columns is-centered is-vcentered"
+                style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                <!-- ROOT logo -->
+                <div class="column is-narrow">
+                  <div
+                    style="padding: 15px; border-radius: 50%; background: #f5f5f5; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                    <img src="logo2.png" alt="ROOT" style="width: 50px; height: auto;">
+                  </div>
+                  <p style="text-align: center; margin-top: 8px; font-weight: 500; color: #485fc7;">ROOT</p>
+                </div>
+
+                <!-- Arrow with spatial relationship info -->
+                <div class="column is-narrow" style="padding: 0 40px;">
+                  <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 160px;">
+                    <div
+                      style="background: #f8f9fa; padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); width: 100%;">
+                      <div style="font-size: 0.85rem; color: #485fc7; font-weight: 500; text-align: center;">
+                        Spatial Relationships
+                      </div>
+                    </div>
+                    <div style="padding: 10px;">
+                      <div style="width: 200px; height: 3px; 
+                                  background: linear-gradient(90deg, #485fc7, #3273dc); 
+                                  position: relative; 
+                                  border-radius: 1.5px;
+                                  box-shadow: 0 2px 8px rgba(72,95,199,0.3);
+                                  animation: glow 1.5s ease-in-out infinite alternate;">
+                        <!-- 箭头头部 -->
+                        <div style="position: absolute; right: -10px; top: -5px; width: 0; height: 0; 
+                                    border-top: 6.5px solid transparent;
+                                    border-bottom: 6.5px solid transparent;
+                                    border-left: 10px solid #3273dc;
+                                    filter: drop-shadow(0 1px 2px rgba(72,95,199,0.3));">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Holodeck logo -->
+                <div class="column is-narrow">
+                  <div
+                    style="padding: 15px; border-radius: 50%; background: #f5f5f5; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                    <img src="./static/images/holodeck.png" alt="Holodeck" style="width: 50px; height: auto;">
+                  </div>
+                  <p style="text-align: center; margin-top: 8px; font-weight: 500; color: #485fc7;">Holodeck</p>
+                </div>
+              </div>
+            </div>
+            <p style="margin: -50px 0;">
+              ROOT's scene understanding capabilities can potentially work together with Holodeck for scene generation.
+              By providing spatial relationship information and object placement suggestions, ROOT aims to assist
+              Holodeck in generating indoor environments.
+            </p>
+
+            <div class="columns is-centered mt-4" style="max-width: 1200px; margin-left: auto; margin-right: auto;">
+              <div class="column">
+                <figure class="image">
+                  <img src="./static/images/9.png" alt="Holodeck Generated Scene 1"
+                    style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                  <figcaption class="mt-2" style="font-size: 1.1rem; 
+                                   color: #4a4a4a; 
+                                   font-weight: 500; 
+                                   line-height: 1.4; 
+                                   text-align: center; 
+                                   padding: 10px;">
+                    A daycare with playrooms connected to nap rooms and a kitchen
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="column">
+                <figure class="image">
+                  <img src="./static/images/8.png" alt="Holodeck Generated Scene 2"
+                    style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                  <figcaption class="mt-2" style="font-size: 1.1rem; 
+                                   color: #4a4a4a; 
+                                   font-weight: 500; 
+                                   line-height: 1.4; 
+                                   text-align: center; 
+                                   padding: 10px;">
+                    A fitness center with a gym area connected to locker rooms and showers
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+
+          <div class="content has-text-justified" style="max-width: 800px; margin: 0 auto;">
+            <!-- Removing the paragraph about ROOT's capabilities -->
+          </div>
+        </div>
+      </div>
+      <!--/ Potential Applications Section -->
+    </div>
+  </section>
+
+
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <div class="citation-block">
+        <pre><code id="citation-text">@article{wang2024root,
+  title={ROOT: VLM based System for Indoor Scene Understanding and Beyond},
+  author={Wang, Yonghui and Chen, Shi-Yong and Zhou, Zhenxing and Li, Siyi and Li, Haoran and Zhou, Wengang and Li, Houqiang},
+  journal={arXiv preprint arXiv:2411.15714},
+  year={2024}
+}</code></pre>
+        <button onclick="copyToClipboard()" class="button is-normal is-rounded is-dark mt-2">
+          <span>Copy</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .citation-block {
+      position: relative;
+    }
+
+    .citation-block pre {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-radius: 4px;
+    }
+
+    .citation-block button {
+      margin-top: 0.5rem;
+    }
+  </style>
+
+  <script>
+    function copyToClipboard() {
+      var copyText = document.getElementById("citation-text");
+      navigator.clipboard.writeText(copyText.textContent).then(function () {
+        alert("Citation copied to clipboard!");
+      }, function (err) {
+        console.error('Could not copy text: ', err);
+      });
+    }
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const videos = document.querySelectorAll('.video-grid video');
+      let currentVideoIndex = 0;
+
+      function playNextVideo() {
+        if (currentVideoIndex < videos.length) {
+          const currentVideo = videos[currentVideoIndex];
+          currentVideo.play();
+          currentVideo.onended = function () {
+            currentVideoIndex++;
+            playNextVideo();
+          };
+        }
+      }
+
+      // Start playing the first video
+      playNextVideo();
+    });
+  </script>
+</body>
+
+</html>
