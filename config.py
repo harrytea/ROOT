@@ -13,7 +13,7 @@ class Config:
     save_file: bool = False
     mask_filter: bool = False
     output_dir: str = 'outputs2'
-    input_image: str = 'asset/0001682.jpg'
+    input_image: str = 'asset/3.jpg'
     prompt_dir: str = './prompt'
     sam_checkpoint: str = 'ckpts/sam-vit-huge'
     qwen_checkpoint: str = 'ckpts/Qwen2-VL-7B-FULL-full'
@@ -33,7 +33,7 @@ class Config:
         parser.add_argument('--save_file', action='store_true')
         parser.add_argument('--mask_filter', action='store_true')
         parser.add_argument('--output_dir', type=str, default='outputs')
-        parser.add_argument('--input_image', type=str, default='asset/0001682.jpg')
+        parser.add_argument('--input_image', type=str, default='asset/3.jpg')
         parser.add_argument('--prompt_dir', type=str, default='./prompt')
         parser.add_argument('--sam_checkpoint', type=str, default='ckpts/sam-vit-huge')
         parser.add_argument('--qwen_checkpoint', type=str, default='ckpts/Qwen2-VL-7B-FULL-full')

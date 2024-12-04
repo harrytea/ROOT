@@ -22,14 +22,6 @@ class IndoorSAMEstimator:
         model = SamModel.from_pretrained(self.config.sam_checkpoint).to(self.device)
         return model, processor
 
-    def _prepare_output_dir(self, image_path):
-        output_dir = osp.join(
-            self.config.output_dir, 
-            osp.basename(osp.dirname(image_path)), 
-            osp.basename(image_path).split(".")[0]
-        )
-        os.makedirs(output_dir, exist_ok=True)
-        return output_dir
 
     def _check_overlap(self, mask, exist_mask):
         """Check the overlap ratio between two masks."""
@@ -37,40 +29,27 @@ class IndoorSAMEstimator:
         overlap = intersection.sum() / float(mask.sum())
         return overlap
 
+
     def process_image(self, image_path, input_boxes):
-        output_dir = self._prepare_output_dir(image_path)
-        overlay_output_path = osp.join(output_dir, "mask_overlay.png")
-        mask_output_path = osp.join(output_dir, "masks.npy")
-        mask_info_path = osp.join(output_dir, "masks_info.json")
-        if self.config.use_cache and osp.exists(mask_info_path) and osp.exists(mask_output_path):
-            with open(mask_info_path, 'r') as f:
-                masks_info_dict = json.load(f)
-            masks = np.load(mask_output_path)
-            return masks, masks_info_dict["selected_idx"]
+        self.output_dir = self._prepare_output_dir(image_path)
+        overlay_output_path = osp.join(self.output_dir, "mask_overlay.png")
+        mask_output_path = osp.join(self.output_dir, "masks.npy")
+        mask_selected_idx_path = osp.join(self.output_dir, "masks_selected_idx.json")
+
+        # Check cache
+        if self.config.use_cache and osp.exists(mask_selected_idx_path) and osp.exists(mask_output_path) and osp.exists(overlay_output_path):
+            return self._load_cached_results(mask_selected_idx_path, mask_output_path)
 
         image = Image.open(image_path).convert("RGB")
-        
         masks = []
         all_masks = []
         selected_boxes = []
         selected_idx = []
-        
         for idx, box in enumerate(tqdm(input_boxes, desc="Processing masks")):
-            inputs = self.processor(image, input_boxes=[[box]], return_tensors="pt").to(self.device)
-            with torch.no_grad():
-                outputs = self.model(**inputs)
-            current_masks = self.processor.image_processor.post_process_masks(
-                outputs.pred_masks.cpu(),
-                inputs["original_sizes"].cpu(),
-                inputs["reshaped_input_sizes"].cpu()
-            )
-            current_mask = cv2.cvtColor(current_masks[0][0].numpy().squeeze().transpose((1, 2, 0)).astype(np.uint8), cv2.COLOR_BGR2GRAY)
-            current_mask = current_mask > 0
-
+            current_mask = self._process_single_box(image, box)
             overlap_with_existing = False
             for existing_mask in masks:
-                overlap = self._check_overlap(current_mask, existing_mask)
-                if overlap > 0.95:
+                if self._check_overlap(current_mask, existing_mask) > 0.95:
                     overlap_with_existing = True
                     break
 
@@ -80,14 +59,24 @@ class IndoorSAMEstimator:
                 selected_idx.append(idx)
             all_masks.append(current_mask)
 
-        
-        np.save(mask_output_path, np.array(all_masks))
-        masks_info_dict = {"selected_idx": selected_idx}
-        with open(mask_info_path, 'w') as f:
-            json.dump(masks_info_dict, f)
-        
+        # Save results
+        self._save_results(all_masks, selected_idx, mask_output_path, mask_selected_idx_path)
         self.visualize_masks(image_path, masks, overlay_output_path)
         return all_masks, selected_idx
+
+
+    def _process_single_box(self, image, box):
+        """Process a single bounding box and return its mask."""
+        inputs = self.processor(image, input_boxes=[[box]], return_tensors="pt").to(self.device)
+        with torch.no_grad():
+            outputs = self.model(**inputs)
+        masks = self.processor.image_processor.post_process_masks(
+            outputs.pred_masks.cpu(),
+            inputs["original_sizes"].cpu(),
+            inputs["reshaped_input_sizes"].cpu()
+        )
+        mask = cv2.cvtColor(masks[0][0].numpy().squeeze().transpose((1, 2, 0)).astype(np.uint8), cv2.COLOR_BGR2GRAY)
+        return mask > 0
 
 
     def visualize_masks(self, image_path, masks, output_path=None):
@@ -127,6 +116,34 @@ class IndoorSAMEstimator:
         boundary_image = np.zeros((h, w, 4))
         boundary_image[boundary > 0] = [1, 1, 1, 0.8]  # 白色边界，轻微透明
         ax.imshow(boundary_image)
+
+
+
+    def _load_cached_results(self, mask_selected_idx_path, mask_output_path):
+        """Load cached mask results if they exist."""
+        with open(mask_selected_idx_path, 'r') as f:
+            masks_info_dict = json.load(f)
+        masks = np.load(mask_output_path)
+        return masks, masks_info_dict["selected_idx"]
+
+
+
+    def _save_results(self, all_masks, selected_idx, mask_output_path, mask_selected_idx_path):
+        """Save masks and related information to disk."""
+        np.save(mask_output_path, np.array(all_masks))
+        selected_idx_dict = {"selected_idx": selected_idx}
+        with open(mask_selected_idx_path, 'w') as f:
+            json.dump(selected_idx_dict, f)
+
+
+    def _prepare_output_dir(self, image_path):
+        output_dir = osp.join(
+            self.config.output_dir, 
+            osp.basename(osp.dirname(image_path)), 
+            osp.basename(image_path).split(".")[0]
+        )
+        os.makedirs(output_dir, exist_ok=True)
+        return output_dir
 
 if __name__ == "__main__":
     print()

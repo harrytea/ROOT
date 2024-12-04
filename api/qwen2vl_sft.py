@@ -16,7 +16,8 @@ class Qwen2VLHandler:
         # Load the model in half-precision on the available device(s)
         # self.model = Qwen2VLForConditionalGeneration.from_pretrained(checkpoint, torch_dtype="auto", device_map="auto")
         # We recommend enabling flash_attention_2 for better acceleration and memory saving, especially in multi-image and video scenarios.
-        self.model = Qwen2VLForConditionalGeneration.from_pretrained(checkpoint,torch_dtype="auto",attn_implementation="flash_attention_2",device_map="auto")
+        # self.model = Qwen2VLForConditionalGeneration.from_pretrained(checkpoint,torch_dtype="auto",attn_implementation="flash_attention_2", device_map="auto")
+        self.model = Qwen2VLForConditionalGeneration.from_pretrained(checkpoint,torch_dtype="auto",attn_implementation="flash_attention_2", device_map="cuda")
         # self.model = Qwen2VLForConditionalGeneration.from_pretrained(checkpoint,torch_dtype="auto",device_map="cpu")
         self.processor = AutoProcessor.from_pretrained(checkpoint)
     

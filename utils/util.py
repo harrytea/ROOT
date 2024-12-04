@@ -7,7 +7,16 @@ from adjustText import adjust_text
 from PIL import Image
 import torch
 import time
+import re
 
+BLUE = '\033[94m'    # For main status messages
+GREEN = '\033[92m'   # For step indicators
+ENDC = '\033[0m'     # Reset color
+YELLOW = '\033[93m'
+CYAN = '\033[96m'
+MAGENTA = '\033[95m'
+BOLD = '\033[1m'
+RED = '\033[91m'     # Added red color
 
 def get_file_list(path, img_extensions=('.jpg', '.jpeg', '.png', '.bmp'), recursive=False):
     if osp.isfile(path):
@@ -63,8 +72,10 @@ def visualize_detections(image_path, boxes, pred_phrases, output_dir, flag, save
         output_filename = f"{file_name}_{flag}.jpg"
         plt.savefig(osp.join(output_dir, output_filename), bbox_inches="tight", dpi=600, pad_inches=0.0)
         plt.close()
+        return osp.join(output_dir, output_filename)
     else:
         plt.show()
+        return None
 
 def save_json(filepath, data):
     """Save data to JSON file"""
@@ -106,7 +117,12 @@ def expand_box(height, width, bbox, expansion_factor=1.5):
 
 def convert_boxes(boxes, image_path):
     """
-    Convert the boxes into (x1, y1, x2, y2)
+    Convert the boxes into (x1, y1, x2, y2) format
+    Args:
+        boxes: Original boxes in (x_center, y_center, width, height) format
+        image_path: Path to the image file
+    Returns:
+        new_boxes: Converted boxes in (x1, y1, x2, y2) format
     """
     image = Image.open(image_path)
     width, height = image.size
@@ -116,6 +132,25 @@ def convert_boxes(boxes, image_path):
         boxes[i][2:] += boxes[i][:2]
     return boxes
 
+def convert_boxes_no_clone(boxes, image_path):
+    """
+    Convert the boxes into (x1, y1, x2, y2) format
+    Args:
+        boxes: Original boxes in (x_center, y_center, width, height) format
+        image_path: Path to the image file
+    Returns:
+        new_boxes: Converted boxes in (x1, y1, x2, y2) format
+    """
+    image = Image.open(image_path)
+    width, height = image.size
+    new_boxes = []
+    for box in boxes:
+        scaled_box = box * torch.Tensor([width, height, width, height])
+        converted_box = scaled_box.clone()  # Create a copy
+        converted_box[:2] -= scaled_box[2:] / 2
+        converted_box[2:] += converted_box[:2]
+        new_boxes.append(converted_box)
+    return new_boxes
 
 
 def draw_bounding_boxes(image_path, bounding_boxes, save_dir, phrase=None):
@@ -171,3 +206,18 @@ def vlm_inference(vlm_run_func, query, image_path, sys_message="", max_retries=3
                 delay *= 2  # Exponential backoff
             else:
                 raise RuntimeError(f"Failed to process after {max_retries} attempts") from e
+            
+
+def extract_json(text):
+    pattern = r'```json(.*?)```'
+    result = re.search(pattern, text, re.DOTALL)
+    if result:
+        return result.group(1).strip()
+    else:
+        return None
+    
+def extract_json_from_string(text):
+    json_str = extract_json(text)  ###########################################################################################
+    data_str = json_str.replace("'", '"')  
+    data_json = json.loads(data_str)
+    return data_json

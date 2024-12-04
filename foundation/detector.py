@@ -1,6 +1,6 @@
 import torch
 import torchvision
-from utils.util import calculate_iou, convert_boxes, draw_bounding_boxes, save_json, vlm_inference
+from utils.util import calculate_iou, convert_boxes, draw_bounding_boxes, save_json, vlm_inference, convert_boxes_no_clone
 import copy
 import json
 import time
@@ -47,7 +47,7 @@ class BoxSelector:
         self.vlm = vlm
 
     def select_boxes(self, logits, boxes, phrase, iou, position, image_path, 
-                    final_boxes_list, use_max=True, use_gpt4=True):
+                    final_boxes_list, use_max=True, use_gpt4=True, output_dir=None):
         converted_boxes = convert_boxes(boxes.clone(), image_path)
         scores = logits.max(dim=1).values if use_max else logits.sum(dim=1)
 
@@ -82,18 +82,16 @@ class BoxSelector:
             return 0, 0
 
         if use_gpt4 or position is None:
-            return self.select_box_based_on_gpt4v(logits=logits, boxes=boxes, phrase=phrase, image_path=image_path)
+            return self.select_box_based_on_gpt4v(logits=logits, boxes=boxes, phrase=phrase, image_path=image_path, output_dir=output_dir)
         return self.select_box_based_on_value(logits=logits, boxes=boxes, position=position)
 
-    def select_box_based_on_gpt4v(self, logits, boxes, phrase, image_path):
+    def select_box_based_on_gpt4v(self, logits, boxes, phrase, image_path, output_dir):
         """Select bounding box based on GPT-4V"""
         full_color_list = ["black", "white", "red", "green", "blue", "yellow", "magenta", "cyan"]
         boxes_list = boxes.clone().tolist()
         selected_color_list = str(full_color_list[:len(boxes_list)])
 
-        output_subdir = osp.join(self.config.output_dir, osp.basename(osp.dirname(image_path)), osp.basename(image_path).split(".")[0])
-        os.makedirs(output_subdir, exist_ok=True)
-        new_image_path = draw_bounding_boxes(image_path, boxes_list, output_subdir, f"{phrase}")
+        new_image_path = draw_bounding_boxes(image_path, boxes_list, output_dir, f"{phrase}")
 
         prompt_path = "./prompt/selecting_box_prompt.txt"
         prompt = open(prompt_path).read()
@@ -102,7 +100,7 @@ class BoxSelector:
         sys_message = "You are an assistant who perfectly judges images."
         try:
             response = vlm_inference(self.vlm.run_llm, prompt, new_image_path, sys_message)
-            save_json(f"{output_subdir}/{phrase}_selecting_box_response.json", response)
+            save_json(f"{output_dir}/{phrase}_selecting_box_response.json", response)
             response = json.loads(response)
             color_idx = full_color_list.index(response["color"])
             
@@ -124,7 +122,7 @@ class BoxSelector:
 
 class BoxDetector:
     """Main class for handling bounding box detection"""
-    def __init__(self, model, processor, vlm,   config):
+    def __init__(self, model, processor, vlm, config):
         self.model = model
         self.processor = processor
         self.vlm = vlm
@@ -132,17 +130,8 @@ class BoxDetector:
         self.text_processor = TextProcessor(processor.tokenizer)
         self.box_selector = BoxSelector(config, vlm)
 
-    def detect(self, tags, image_path, positions=None, existing_boxes=None):
-        """
-        Perform detection and return results
-        Args:
-            tags: Text labels to detect
-            image_path: Path to the image
-            positions: Optional list of position information
-            existing_boxes: List of existing bounding boxes
-        Returns:
-            tuple: (list of bounding boxes, list of confidence scores, list of predicted phrases)
-        """
+    def detect(self, tags, image_path, output_dir=None, positions=None, existing_boxes=None):
+        self.output_dir = output_dir
         existing_boxes = existing_boxes or []
         
         # run grounding dino model
@@ -154,14 +143,13 @@ class BoxDetector:
         tags_record = self.text_processor.process_caption_tokens(tags)
         if positions and len(tags_record) != len(positions):
             raise ValueError("Mismatch between tags records and positions")
-        
 
-        final_boxes, scores, pred_phrases = self._process_phrases_and_get_results(
-            phrases, tags_record, positions, logits_filt, boxes_filt, 
-            image_path, existing_boxes
+        unconverted_boxes, scores, pred_phrases = self._process_phrases_and_get_results(
+            phrases, tags_record, positions, logits_filt, boxes_filt, image_path, existing_boxes, self.output_dir
         )
+        converted_boxes = convert_boxes_no_clone(unconverted_boxes, image_path)
+        return converted_boxes, scores, pred_phrases, unconverted_boxes
 
-        return convert_boxes(final_boxes, image_path), scores, pred_phrases, final_boxes
 
     def _run_grounding_dino_inference(self, image_raw, caption):
         """Run model inference"""
@@ -173,9 +161,9 @@ class BoxDetector:
         mask = logits.max(dim=1)[0] > self.config.box_threshold
         return logits[mask], boxes[mask]
 
-    def _process_phrases_and_get_results(self, phrases, tags_record, positions, logits_filt, boxes_filt, image_path, existing_boxes):
+    def _process_phrases_and_get_results(self, phrases, tags_record, positions, logits_filt, boxes_filt, image_path, existing_boxes, output_dir):
         """Process detection results for each phrase"""
-        final_boxes, scores, pred_phrases = [], [], []
+        unconverted_boxes, scores, pred_phrases = [], [], []
         
         for i, (record, phrase) in enumerate(zip(tags_record, phrases)):
             if not phrase.strip():
@@ -191,27 +179,27 @@ class BoxDetector:
             if logits_selected.nelement() == 0 or boxes_selected.nelement() == 0:
                 continue
 
-            checking_list = copy.deepcopy(final_boxes)
+            checking_list = copy.deepcopy(unconverted_boxes)
             if existing_boxes:
                 checking_list.extend(existing_boxes)
 
             boxes_selected, score = self.box_selector.select_boxes(
-                logits_selected, 
-                boxes_selected, 
-                phrase, 
-                self.config.iou_threshold,
-                positions[i] if positions else None,
-                image_path, 
-                checking_list
+                logits=logits_selected, 
+                boxes=boxes_selected, 
+                phrase=phrase, 
+                iou=self.config.iou_threshold,
+                position=positions[i] if positions else None,
+                image_path=image_path, 
+                final_boxes_list=checking_list,
+                output_dir=output_dir
             )
-
             if isinstance(boxes_selected, int) and score == 0:
                 print(f"- Failed to select valid box for: '{phrase}'\n{'='*50}")
                 continue
                 
             print(f"- Detected box for '{phrase}': {[round(x, 3) for x in boxes_selected.tolist()]}, score: {score:.3f}\n{'='*50}")
-            final_boxes.append(boxes_selected)
+            unconverted_boxes.append(boxes_selected)
             scores.append(score)
             pred_phrases.append(phrase)
 
-        return final_boxes, scores, pred_phrases
+        return unconverted_boxes, scores, pred_phrases

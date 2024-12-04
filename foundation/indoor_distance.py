@@ -12,31 +12,20 @@ class IndoorDistanceEstimator:
         self.height = None
         self.intrinsic_parameters = None
 
-    def _prepare_output_dir(self, image_path):
-        output_dir = osp.join(
-            self.config.output_dir, 
-            osp.basename(osp.dirname(image_path)), 
-            osp.basename(image_path).split(".")[0]
-        )
-        os.makedirs(output_dir, exist_ok=True)
-        return output_dir
 
     def process_image(self, image_path, masks, text_descriptions, metric_depth):
         self.output_dir = self._prepare_output_dir(image_path)
         img = cv2.imread(image_path)
         self.height, self.width = img.shape[:2]
         self.intrinsic_parameters = {
-            'width': self.width, 
-            'height': self.height,
-            'fx': 1.5 * self.width, 
-            'fy': 1.5 * self.height,
-            'cx': self.width / 2, 
-            'cy': self.height / 2,
+            'width': self.width, 'height': self.height,
+            'fx': 1.5 * self.width, 'fy': 1.5 * self.height,
+            'cx': self.width / 2, 'cy': self.height / 2,
         }
 
         # Get point clouds for each mask
         pcd_canonicalized, canonicalized, transform, point_clouds, pcd_paths = \
-            self._get_segment_pcds(image_path, masks, metric_depth, text_descriptions)
+            self._get_segment_pcds(image_path, masks, metric_depth, text_descriptions, self.output_dir)
         point_clouds = self._post_canonicalize_pcd(point_clouds, canonicalized, transform)
         for pcd_path, each_pcd in zip(pcd_paths, point_clouds):
             o3d.io.write_point_cloud(pcd_path, each_pcd)
@@ -52,7 +41,7 @@ class IndoorDistanceEstimator:
         return relative_positions, point_clouds, colors, sizes
     
 
-    def _get_segment_pcds(self, image_path, masks, metric_depth, text_descriptions):
+    def _get_segment_pcds(self, image_path, masks, metric_depth, text_descriptions, output_dir):
         original_image = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
         point_clouds = []
         pcd_paths = []
@@ -64,17 +53,17 @@ class IndoorDistanceEstimator:
         for i, mask_binary in enumerate(masks):
             masked_rgb = self._apply_mask_to_image(original_image, mask_binary)
             masked_metric_depth = self._apply_mask_to_array(metric_depth, mask_binary)
-            masked_rgb_path = f'{self.output_dir}/rgb_{i}_{text_descriptions[i]}.png'
+            masked_rgb_path = f'{output_dir}/rgb_{i}_{text_descriptions[i]}.png'
             cv2.imwrite(masked_rgb_path, cv2.cvtColor(masked_rgb, cv2.COLOR_RGB2BGR))
             
             # create point cloud
             pcd = self._create_point_cloud_indoor(masked_rgb_path, masked_metric_depth)
-            masked_pcd_path = f"{self.output_dir}/pcd_{i}_{text_descriptions[i]}.pcd"
+            masked_pcd_path = f"{output_dir}/pcd_{i}_{text_descriptions[i]}.pcd"
             # o3d.io.write_point_cloud(masked_pcd_path, pcd)
             
             point_clouds.append(pcd)
             pcd_paths.append(masked_pcd_path)
-        return pcd_canonicalized, canonicalized, transform,point_clouds, pcd_paths
+        return pcd_canonicalized, canonicalized, transform, point_clouds, pcd_paths
     
     def _apply_mask_to_image(self, image, mask):
         masked_image = image.copy()
@@ -143,10 +132,10 @@ class IndoorDistanceEstimator:
                 
                 relative_positions.append({
                     'object_pair': (text_descriptions[i], text_descriptions[j]),
-                    'distance': distance,
-                    'relative_vector': relative_vector
+                    'distance': float(distance),
+                    'relative_vector': relative_vector.tolist()
                 })
-                
+
         return relative_positions 
     
     def _canonicalize_point_cloud(self, pcd, canonicalize_threshold=0.3):
@@ -198,3 +187,12 @@ class IndoorDistanceEstimator:
                 inlier_cloud = inlier_cloud.transform(transformation)
             pcds[idx] = inlier_cloud
         return pcds
+    
+    def _prepare_output_dir(self, image_path):
+        output_dir = osp.join(
+            self.config.output_dir, 
+            osp.basename(osp.dirname(image_path)), 
+            osp.basename(image_path).split(".")[0]
+        )
+        os.makedirs(output_dir, exist_ok=True)
+        return output_dir

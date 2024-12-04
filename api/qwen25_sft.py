@@ -11,6 +11,7 @@ class Qwen25Handler:
         pass
     
     def initialize_llm(self, checkpoint):
+        # self.model = AutoModelForCausalLM.from_pretrained(checkpoint, torch_dtype="auto", device_map="auto")
         self.model = AutoModelForCausalLM.from_pretrained(checkpoint, torch_dtype="auto", device_map="auto")
         # self.model = AutoModelForCausalLM.from_pretrained(checkpoint, torch_dtype="float32", device_map="cpu")
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
@@ -43,7 +44,7 @@ class Qwen25Handler:
 
 if __name__ == '__main__':
     my_vlm = Qwen25Handler()
-    my_vlm.initialize_llm(checkpoint="Qwen/Qwen2.5-3B-Instruct")
+    my_vlm.initialize_llm(checkpoint="/llm-cfs-nj/person/harryyhwang/ft_local/ft_local/ROOT/ckpts/Qwen2.5-3B-Instruct")
     answer = my_vlm.run_llm("hi")
     print(answer)
 

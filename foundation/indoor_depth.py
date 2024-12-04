@@ -35,20 +35,20 @@ class IndoorDepthEstimator:
         output_dir = self._prepare_output_dir(image_path)
         depth_output_path = osp.join(output_dir, "depth_map.png")
         depth_range_path = osp.join(output_dir, "depth_range.npy")
-        depth_info_path = osp.join(output_dir, "depth_info.npy")
+        depth_original_path = osp.join(output_dir, "depth_original.npy")
 
         # Check cache if enabled
-        if self.config.use_cache and osp.exists(depth_output_path) and osp.exists(depth_info_path):
+        if self.config.use_cache and osp.exists(depth_output_path) and osp.exists(depth_original_path):
             depth_map = cv2.imread(depth_output_path, cv2.IMREAD_UNCHANGED)
-            depth_info = np.load(depth_info_path)
-            return depth_map, depth_info
+            depth_original = np.load(depth_original_path)
+            return depth_map, depth_original
 
         # If no cache or cache disabled, process the depth map
         image = Image.open(image_path)
         depth_map = self.predict_depth(image)
 
         # Process depth map
-        depth_info = depth_map.copy()
+        depth_original = depth_map.copy()
         depth_min = depth_map.min()
         depth_max = depth_map.max()
 
@@ -60,18 +60,18 @@ class IndoorDepthEstimator:
         # Save depth map and original depth information
         depth_image = Image.fromarray(depth_map)
         depth_image.save(depth_output_path)
-        np.save(depth_info_path, depth_info)
+        np.save(depth_original_path, depth_original)
         
         # Save depth range information
         depth_range = {'min': float(depth_min), 'max': float(depth_max)}
         np.save(depth_range_path, depth_range)
         
-        return depth_map, depth_info
+        return depth_map, depth_original
 
     def predict_depth(self, color_image):
         original_width, original_height = color_image.size
         image_tensor = transforms.ToTensor()(color_image).unsqueeze(0).to('cuda' if torch.cuda.is_available() else 'cpu')
-
+        
         pred = self.model(image_tensor, dataset='nyu')
         if isinstance(pred, dict):
             pred = pred.get('metric_depth', pred.get('out'))
