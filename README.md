@@ -11,7 +11,7 @@
 **Yonghui Wang<sup>1,2</sup>, Shi-Yong Chen<sup>2</sup>, Zhenxing Zhou<sup>2</sup>, Siyi Li<sup>2</sup>, Haoran Li<sup>1,2</sup>, Wengang Zhou<sup>1</sup>, Houqiang Li<sup>1</sup>**  
 <sup>1</sup> University of Science and Technology of China (USTC)  <sup>2</sup> Game AI Center, Tencent IEG  
 
-[![Paper](http://img.shields.io/badge/Paper-arXiv:2411.15714-b31b1b?style=flat&logo=arxiv)](https://arxiv.org/abs/2411.15714) [![Project](http://img.shields.io/badge/Project-Website-4B9CD3?style=flat&logo=googlechrome&logoColor=white)](https://root-vlm.github.io) [![Weights](http://img.shields.io/badge/Weights-HuggingFace-4f46e5?style=flat&logo=huggingface&logoColor=white)](https://huggingface.co/harrytea/ROOT) [![License](http://img.shields.io/badge/License-MIT-green?style=flat)](./LICENSE)
+[![Paper](http://img.shields.io/badge/Paper-arXiv:2411.15714-b31b1b?style=flat&logo=arxiv)](https://arxiv.org/abs/2411.15714) [![Project](http://img.shields.io/badge/Project-Website-4B9CD3?style=flat&logo=googlechrome&logoColor=white)](https://harrytea.github.io/ROOT/) [![Weights](http://img.shields.io/badge/Weights-HuggingFace-4f46e5?style=flat&logo=huggingface&logoColor=white)](https://huggingface.co/harrytea/ROOT) [![License](http://img.shields.io/badge/License-MIT-green?style=flat)](./LICENSE)
 
 </div>
 
