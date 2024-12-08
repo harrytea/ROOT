@@ -17,6 +17,8 @@
 
 ---
 
+🎉 The Qwen2-VL and Intern2-VL checkpoints have released! [huggingface ckpt](https://huggingface.co/harrytea/ROOT)
+
 ## 💡 Introduction
 
 <div align="center">
@@ -48,7 +50,9 @@ It combines **GPT-4V** with vision models to detect objects, extract spatial met
 1. **Download Required Model**  
    Download the [depth_anything_metric_depth_indoor.pt](https://huggingface.co/spaces/LiheYoung/Depth-Anything/blob/main/checkpoints_metric_depth/depth_anything_metric_depth_indoor.pt) and place it in the `foundation/Depth_Anything` directory.  
 
-2. **Run the System**  
+2. **Download the Qwen2-VL Model from Our huggingface**
+
+3. **Run the System**  
    ```bash
    # Run with main script
    python main.py
