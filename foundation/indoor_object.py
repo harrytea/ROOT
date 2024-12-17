@@ -23,7 +23,7 @@ class IndoorObjectDetector:
     def _init_vlm(self):
         print(f"Loading VLM model: {self.config.vlm_model}")
         if self.config.vlm_model == "gpt-4v":
-            from api.gpt4v import GPT4VHandler
+            from api.gpt4v_azure import GPT4VHandler
             vlm = GPT4VHandler()
             vlm.initialize_llm()
             return vlm

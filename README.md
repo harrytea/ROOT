@@ -47,12 +47,13 @@ It combines **GPT-4V** with vision models to detect objects, extract spatial met
 
 ## 🚀 Quickstart
 
-1. **Download Required Model**  
-   Download the [depth_anything_metric_depth_indoor.pt](https://huggingface.co/spaces/LiheYoung/Depth-Anything/blob/main/checkpoints_metric_depth/depth_anything_metric_depth_indoor.pt) and place it in the `foundation/Depth_Anything` directory.  
+1. Download the [depth_anything_metric_depth_indoor.pt](https://huggingface.co/spaces/LiheYoung/Depth-Anything/blob/main/checkpoints_metric_depth/depth_anything_metric_depth_indoor.pt) and place it in the `foundation/Depth_Anything` directory.  
 
-2. **Download the Qwen2-VL Model from Our huggingface**
+2. Download the Qwen2-VL Model from Our [huggingface](https://huggingface.co/harrytea/ROOT) and put it in `ckpts/Qwen2-VL-7B-FULL-full`. Additionally, you need to download the [Qwen2.5](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct) model and put it in `ckpts/Qwen2.5-3B-Instruct`
 
-3. **Run the System**  
+3. Add the Azure OpenAI token to the environment variable OPENAI_API_KEY, and uncomment line 28 of `api/gpt4v_azure.py` and comment out line 29. Alternatively, you can directly add your api_key to the token parameter in line 24 of `api/gpt4v_azure.py`
+
+4. **Run the System**  
    ```bash
    # Run with main script
    python main.py
