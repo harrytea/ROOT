@@ -170,7 +170,7 @@ During training, we include Chain-of-Thought (CoT) data. The CoT description is 
             "[your_img_path]"
         ]
     },
-    ...
+    {},
 ]
 ```
 
